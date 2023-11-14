@@ -110,9 +110,7 @@ public class UsuarioDAOimp extends ConexionDB implements UsuarioDAO{
                 usuario.setNombre(rs.getString("nombre"));
                 usuario.setCorreo_electronico(rs.getString("correo_electronico"));
                 usuario.setContrasena(rs.getString("contrasena"));
-                usuario.setFecha_registro(rs.getDate("fecha_registro"));
-                
-
+                usuario.setFecha_registro(rs.getDate("fecha_registro"));             
                 usuarios.add(usuario);
             }
         } catch (Exception e) {
@@ -120,7 +118,6 @@ public class UsuarioDAOimp extends ConexionDB implements UsuarioDAO{
         } finally {
             this.desconectar();
         }
-
         return usuarios;
     }
     
