@@ -29,6 +29,7 @@ public class PerfilUsuarioDAOimp extends ConexionDB implements PerfilUsuarioDAO 
             ps.setString(3, perfilUsuario.getDescripcion());
             ps.executeUpdate();
         } catch (Exception e) {
+            e.printStackTrace(); // Imprime la traza de la excepción
             throw e;
         } finally {
             desconectar();
@@ -45,6 +46,7 @@ public class PerfilUsuarioDAOimp extends ConexionDB implements PerfilUsuarioDAO 
             ps.setInt(3, perfilUsuario.getProfile_Id());
             ps.executeUpdate();
         } catch (Exception e) {
+            e.printStackTrace(); // Imprime la traza de la excepción
             throw e;
         } finally {
             desconectar();
@@ -59,6 +61,7 @@ public class PerfilUsuarioDAOimp extends ConexionDB implements PerfilUsuarioDAO 
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (Exception e) {
+            e.printStackTrace(); // Imprime la traza de la excepción
             throw e;
         } finally {
             desconectar();
@@ -86,6 +89,7 @@ public class PerfilUsuarioDAOimp extends ConexionDB implements PerfilUsuarioDAO 
                 perfilUsuario.setDescripcion(rs.getString("descripcion"));
             }
         } catch (Exception e) {
+            e.printStackTrace(); // Imprime la traza de la excepción
             throw e;
         } finally {
             desconectar();
@@ -116,6 +120,7 @@ public class PerfilUsuarioDAOimp extends ConexionDB implements PerfilUsuarioDAO 
                 perfilesUsuarios.add(perfilUsuario);
             }
         } catch (Exception e) {
+            e.printStackTrace(); // Imprime la traza de la excepción
             throw e;
         } finally {
             desconectar();
@@ -123,5 +128,4 @@ public class PerfilUsuarioDAOimp extends ConexionDB implements PerfilUsuarioDAO 
 
         return perfilesUsuarios;
     }
-
 }

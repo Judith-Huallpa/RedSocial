@@ -8,6 +8,7 @@ package com.emergentes.controller;
 import com.emergentes.dao.GrupoDAO;
 import com.emergentes.dao.GrupoDAOimp;
 import com.emergentes.modelo.Grupos;
+import com.emergentes.modelo.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "GrupoController", urlPatterns = {"/GrupoController"})
 public class GrupoController extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -31,16 +33,17 @@ public class GrupoController extends HttpServlet {
             int id = 0;
             Grupos grupo = new Grupos();
             String action = (request.getParameter("action") != null) ? request.getParameter("action") : "view";
+
             switch (action) {
                 case "add":
                     request.setAttribute("grupo", grupo);
-                    request.getRequestDispatcher("frmGrupos.jsp").forward(request, response);
+                    request.getRequestDispatcher("grupos.jsp").forward(request, response);
                     break;
                 case "edit":
                     id = Integer.parseInt(request.getParameter("id"));
                     grupo = dao.getById(id);
                     request.setAttribute("grupo", grupo);
-                    request.getRequestDispatcher("frmGrupos.jsp").forward(request, response);
+                    request.getRequestDispatcher("grupos.jsp").forward(request, response);
                     break;
                 case "delete":
                     id = Integer.parseInt(request.getParameter("id"));
@@ -53,10 +56,13 @@ public class GrupoController extends HttpServlet {
                     request.getRequestDispatcher("grupos.jsp").forward(request, response);
                     break;
                 default:
+                    request.getRequestDispatcher("grupos.jsp").forward(request, response);
                     break;
             }
         } catch (Exception ex) {
-            System.out.println("Error: " + ex.getMessage());
+            ex.printStackTrace(); // Imprimir la traza completa del error en la consola
+            request.setAttribute("error", ex.getMessage());
+            request.getRequestDispatcher("nav.jsp").forward(request, response);
         }
     }
 
@@ -64,6 +70,7 @@ public class GrupoController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
+        int idUser = Integer.parseInt(request.getParameter("idUser"));
         String nombreDelGrupo = request.getParameter("nombreDelGrupo");
         String descripcion = request.getParameter("descripcion");
         Grupos grupo = new Grupos();
@@ -71,36 +78,25 @@ public class GrupoController extends HttpServlet {
         grupo.setGroup_id(id);
         grupo.setNombreDelGrupo(nombreDelGrupo);
         grupo.setDescripcion(descripcion);
+        Usuario usuario = new Usuario();
+        usuario.setUser_id(idUser);
 
-        if (id == 0) {
-            // Nuevo
-            try {
-                GrupoDAO dao = new GrupoDAOimp();
+        grupo.setUser_id(usuario);
+
+        try {
+            GrupoDAO dao = new GrupoDAOimp();
+            if (id == 0) {
+                // Nuevo
                 dao.insert(grupo);
-                response.sendRedirect(request.getContextPath() + "/GrupoController");
-            } catch (Exception ex) {
-                System.out.println("Error: " + ex.getMessage());
-            }
-        } else {
-            // Edición
-            try {
-                GrupoDAO dao = new GrupoDAOimp();
+            } else {
+                // Edición
                 dao.update(grupo);
-                response.sendRedirect(request.getContextPath() + "/GrupoController");
-            } catch (Exception ex) {
-                System.out.println("Error: " + ex.getMessage());
             }
+            response.sendRedirect(request.getContextPath() + "/GrupoController");
+        } catch (Exception ex) {
+            System.out.println("Error: " + ex.getMessage());
+            // Puedes agregar mensajes de error o redirigir a una página de error
+            response.sendRedirect(request.getContextPath() + "/error.jsp");
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

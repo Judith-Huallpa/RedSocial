@@ -8,6 +8,15 @@ public class Usuario {
     private String contrasena ;
     private Date fecha_registro;
 
+    public Usuario() {
+        this.user_id = 0;
+        this.nombre = "";
+        this.correo_electronico = "";
+        this.contrasena = "";
+        this.fecha_registro = new Date();
+    }
+
+    
     public int getUser_id() {
         return user_id;
     }

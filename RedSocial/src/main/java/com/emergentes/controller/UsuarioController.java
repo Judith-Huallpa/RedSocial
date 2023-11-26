@@ -51,7 +51,7 @@ public class UsuarioController extends HttpServlet {
                 case "view":
                     List<Usuario> lista = dao.getAll();
                     request.setAttribute("usuarios", lista);
-                    request.getRequestDispatcher("usuarios.jsp").forward(request, response);
+                    request.getRequestDispatcher("perfileUsuario.jsp").forward(request, response);
                     break;
                 default:
                     break;
@@ -80,7 +80,7 @@ public class UsuarioController extends HttpServlet {
             try {
                 UsuarioDAO dao = new UsuarioDAOimp();
                 dao.insert(usuario);
-                response.sendRedirect(request.getContextPath() + "/UsuarioController");
+               
             } catch (Exception ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
@@ -89,21 +89,12 @@ public class UsuarioController extends HttpServlet {
             try {
                 UsuarioDAO dao = new UsuarioDAOimp();
                 dao.update(usuario);
-                response.sendRedirect(request.getContextPath() + "/UsuarioController");
+                
             } catch (Exception ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
         }
+        System.out.println("despues de insertar");
+        response.sendRedirect("perfileUsuario.jsp");
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

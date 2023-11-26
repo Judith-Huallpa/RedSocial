@@ -68,12 +68,12 @@ public class ComentarioDAOimp extends ConexionDB implements ComentarioDAO {
     }
 
     @Override
-    public Comentarios getById(int id) throws Exception {
+    public Comentarios getById(int postId) throws Exception {
         Comentarios comentario = null;
         try {
             conectar();
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Comentarios WHERE comment_id=?;");
-            ps.setInt(1, id);
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Comentarios WHERE post_id=?;");
+            ps.setInt(1, postId);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
@@ -136,4 +136,54 @@ public class ComentarioDAOimp extends ConexionDB implements ComentarioDAO {
         return comentarios;
     }
 
+    @Override
+    public List<Comentarios> getByPostId(int postId) throws Exception {
+         List<Comentarios> comentarios = new ArrayList<>();
+    try {
+        conectar();
+        // Utilizamos INNER JOIN para combinar la tabla de comentarios con las tablas de publicaciones, usuarios y grupos
+        PreparedStatement ps = conn.prepareStatement(
+                "SELECT c.*, p.*, u.*, g.nombre_del_grupo AS nombre_grupo FROM Comentarios c "
+                + "INNER JOIN Publicaciones p ON c.post_id = p.post_id "
+                + "INNER JOIN Usuarios u ON c.user_id = u.user_id "
+                + "INNER JOIN Grupos g ON p.grupo_id = g.group_id "
+                + "WHERE c.post_id = ?;"
+        );
+        ps.setInt(1, postId);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            Comentarios comentario = new Comentarios();
+            comentario.setCommentId(rs.getInt("comment_id"));
+
+            Publicaciones post = new Publicaciones();
+            post.setPost_id(rs.getInt("post_id"));
+            post.setContenido_del_mensaje(rs.getString("contenido_del_mensaje"));
+            post.setFoto_de_publish(rs.getString("foto_de_publish"));
+
+            comentario.setPost_id(post);
+
+            Usuario user = new Usuario();
+            user.setUser_id(rs.getInt("user_id"));
+            user.setNombre(rs.getString("nombre"));
+            comentario.setUser_id(user);
+
+            // Obtener el nombre del grupo
+            String nombreGrupo = rs.getString("nombre_grupo");
+
+            // Puedes hacer algo con el nombre del grupo si es necesario
+
+            comentario.setContenido_del_comentario(rs.getString("contenido_del_comentario"));
+            comentario.setFecha_comentario(rs.getTimestamp("fecha_comentario"));
+
+            comentarios.add(comentario);
+        }
+    } catch (Exception e) {
+        throw e;
+    } finally {
+        desconectar();
+    }
+
+    return comentarios;
+    }
 }

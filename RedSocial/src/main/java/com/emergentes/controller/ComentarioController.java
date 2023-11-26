@@ -5,8 +5,16 @@
  */
 package com.emergentes.controller;
 
+import com.emergentes.dao.ComentarioDAO;
+import com.emergentes.dao.ComentarioDAOimp;
+import com.emergentes.modelo.Comentarios;
+import com.emergentes.modelo.Publicaciones;
+import com.emergentes.modelo.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,69 +28,86 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "ComentarioController", urlPatterns = {"/ComentarioController"})
 public class ComentarioController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ComentarioController</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ComentarioController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            ComentarioDAO dao = new ComentarioDAOimp();
+            int id;
+            Comentarios comentario;
+            String action = (request.getParameter("action") != null) ? request.getParameter("action") : "view";
+
+            switch (action) {
+                case "add":
+                    comentario = new Comentarios();
+                    request.setAttribute("comentario", comentario);
+                    request.getRequestDispatcher("publicaciones.jsp").forward(request, response);
+                    break;
+                case "edit":
+                    id = Integer.parseInt(request.getParameter("id"));
+                    comentario = dao.getById(id);
+                    request.setAttribute("comentario", comentario);
+                    request.getRequestDispatcher("publicaciones.jsp").forward(request, response);
+                    break;
+                case "delete":
+                    id = Integer.parseInt(request.getParameter("id"));
+                    dao.delete(id);
+                    response.sendRedirect(request.getContextPath() + "/ComentarioController");
+                    break;
+                case "view":
+                    
+                    // También puedes cargar todos los comentarios, si es necesario
+                    List<Comentarios> lista = dao.getAll();
+                    request.setAttribute("Comentarios", lista);
+                    request.getRequestDispatcher("comentarios.jsp").forward(request, response);
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception ex) {
+            System.out.println("Error: " + ex.getMessage());
+        }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
-    }
+        int id = Integer.parseInt(request.getParameter("id"));
+        int postId = Integer.parseInt(request.getParameter("postId"));
+        int userId = Integer.parseInt(request.getParameter("userId"));
+        String contenidoComentario = request.getParameter("contenidoComentario");
+        
+        Comentarios comentario = new Comentarios();
+        comentario.setCommentId(id);
+        comentario.setContenido_del_comentario(contenidoComentario);
+        // Crear un objeto Publicaciones y establecer el ID
+        Publicaciones publicacion = new Publicaciones();
+        publicacion.setPost_id(postId);
+        comentario.setPost_id(publicacion);
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
+        Usuario usuario = new Usuario();
+        usuario.setUser_id(userId);
+        comentario.setUser_id(usuario);
+        if (id == 0) {
+           
+            ComentarioDAO dao = new ComentarioDAOimp();
+            try {
+                dao.insert(comentario);
+                response.sendRedirect(request.getContextPath() + "/PublicacionController");
+            } catch (Exception ex) {
+                Logger.getLogger(ComentarioController.class.getName()).log(Level.SEVERE, null, ex);
+                ex.printStackTrace();
+            }
+        } else {
+            // Edición
+            try {
+                ComentarioDAO dao = new ComentarioDAOimp();
+                dao.update(comentario);
+                response.sendRedirect(request.getContextPath() + "/ComentarioController");
+            } catch (Exception ex) {
+                System.out.println("Error: en editar" + ex.getMessage());
+            }
+        }
+    }
 
 }

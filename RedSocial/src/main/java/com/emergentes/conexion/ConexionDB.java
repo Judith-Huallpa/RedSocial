@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class ConexionDB {
     static String driver="com.mysql.cj.jdbc.Driver";
-    static String url="jdbc:mysql://localhost:3306/bd_biblioteca";
+    static String url="jdbc:mysql://localhost:3306/red_social";
     static String usuario="root";
     static String password="4040";
     protected Connection conn=null;

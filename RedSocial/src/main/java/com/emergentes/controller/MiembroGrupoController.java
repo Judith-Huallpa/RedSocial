@@ -56,10 +56,12 @@ public class MiembroGrupoController extends HttpServlet {
                     request.getRequestDispatcher("miembrosGrupos.jsp").forward(request, response);
                     break;
                 default:
+                    System.out.println("Aviso: Acción no reconocida en MiembroGrupoController");
                     break;
             }
         } catch (Exception ex) {
-            System.out.println("Error: " + ex.getMessage());
+            ex.printStackTrace();
+            System.out.println("Error en MiembroGrupoController: " + ex.getMessage());
         }
     }
 
@@ -73,7 +75,7 @@ public class MiembroGrupoController extends HttpServlet {
         Miembros_Grupo miembroGrupo = new Miembros_Grupo();
 
         miembroGrupo.setMembership_id(id);
-        
+
         // Crear objetos Grupos y Usuario con los IDs correspondientes
         Grupos grupo = new Grupos();
         grupo.setGroup_id(groupId);
@@ -83,7 +85,7 @@ public class MiembroGrupoController extends HttpServlet {
 
         miembroGrupo.setGroup_id(grupo);
         miembroGrupo.setUser_id(usuario);
-        
+
         miembroGrupo.setRol_Usuario_Grupo(rolDeUsuarioEnElGrupo);
 
         if (id == 0) {

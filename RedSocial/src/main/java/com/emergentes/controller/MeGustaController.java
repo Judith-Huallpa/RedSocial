@@ -13,6 +13,7 @@ import com.emergentes.modelo.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -51,11 +52,12 @@ public class MeGustaController extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + "/MeGustaController");
                     break;
                 case "view":
-                    List<Me_Gusta> lista = dao.getAll();
-                    request.setAttribute("meGustas", lista);
-                    request.getRequestDispatcher("meGustas.jsp").forward(request, response);
+                    List<Me_Gusta> listaMeGustas = dao.getAll();
+                    request.setAttribute("meGustas", listaMeGustas);  // Usa el mismo nombre "meGustas"
+                    request.getRequestDispatcher("publicaciones.jsp").forward(request, response);
                     break;
                 default:
+                    request.getRequestDispatcher("publicaciones.jsp").forward(request, response);
                     break;
             }
         } catch (Exception ex) {
@@ -87,7 +89,7 @@ public class MeGustaController extends HttpServlet {
             try {
                 MeGustaEnPublicacionDAO dao = new MeGustaEnPublicacionDAOimp();
                 dao.insert(meGusta);
-                response.sendRedirect(request.getContextPath() + "/MeGustaController");
+                response.sendRedirect(request.getContextPath() + "/PublicacionController");
             } catch (Exception ex) {
                 System.out.println("Error: " + ex.getMessage());
             }

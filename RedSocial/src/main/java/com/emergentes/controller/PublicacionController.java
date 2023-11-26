@@ -5,13 +5,17 @@
  */
 package com.emergentes.controller;
 
+import com.emergentes.dao.ComentarioDAO;
+import com.emergentes.dao.ComentarioDAOimp;
 import com.emergentes.dao.PublicacionDAO;
 import com.emergentes.dao.PublicacionDAOimp;
+import com.emergentes.modelo.Comentarios;
 import com.emergentes.modelo.Grupos;
 import com.emergentes.modelo.Publicaciones;
 import com.emergentes.modelo.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -31,19 +35,21 @@ public class PublicacionController extends HttpServlet {
             throws ServletException, IOException {
         try {
             PublicacionDAO dao = new PublicacionDAOimp();
+            
             int id = 0;
             Publicaciones publicacion = new Publicaciones();
+
             String action = (request.getParameter("action") != null) ? request.getParameter("action") : "view";
             switch (action) {
                 case "add":
                     request.setAttribute("publicacion", publicacion);
-                    request.getRequestDispatcher("frmPublicaciones.jsp").forward(request, response);
+                    request.getRequestDispatcher("publicaciones.jsp").forward(request, response);
                     break;
                 case "edit":
                     id = Integer.parseInt(request.getParameter("id"));
                     publicacion = dao.getById(id);
                     request.setAttribute("publicacion", publicacion);
-                    request.getRequestDispatcher("frmPublicaciones.jsp").forward(request, response);
+                    request.getRequestDispatcher("publicaciones.jsp").forward(request, response);
                     break;
                 case "delete":
                     id = Integer.parseInt(request.getParameter("id"));
@@ -74,7 +80,8 @@ public class PublicacionController extends HttpServlet {
         Publicaciones publicacion = new Publicaciones();
 
         publicacion.setPost_id(id);
-
+        publicacion.setContenido_del_mensaje(contenidoDelMensaje);
+        publicacion.setFoto_de_publish(fotoDePublicacion);
         // Crear un objeto Usuario y establecer el ID
         Usuario usuario = new Usuario();
         usuario.setUser_id(userId);
@@ -85,9 +92,6 @@ public class PublicacionController extends HttpServlet {
         grupo.setGroup_id(groupId);
         publicacion.setGrupo_id(grupo);
 
-        publicacion.setContenido_del_mensaje(contenidoDelMensaje);
-        publicacion.setFoto_de_publish(fotoDePublicacion);
-
         if (id == 0) {
             // Nuevo
             try {
@@ -95,7 +99,9 @@ public class PublicacionController extends HttpServlet {
                 dao.insert(publicacion);
                 response.sendRedirect(request.getContextPath() + "/PublicacionController");
             } catch (Exception ex) {
-                System.out.println("Error: " + ex.getMessage());
+                System.out.println("Error: en agregar" + ex.getMessage());
+                ex.printStackTrace();
+                System.out.println(id + "id" + userId + "user grupo" + groupId);
             }
         } else {
             // Edición
@@ -104,19 +110,8 @@ public class PublicacionController extends HttpServlet {
                 dao.update(publicacion);
                 response.sendRedirect(request.getContextPath() + "/PublicacionController");
             } catch (Exception ex) {
-                System.out.println("Error: " + ex.getMessage());
+                System.out.println("Error: en editar" + ex.getMessage());
             }
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

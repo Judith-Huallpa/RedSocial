@@ -1,122 +1,63 @@
 <%-- 
     Document   : index
-    Created on : 14-nov-2023, 13:36:37
+    Created on : 15-nov-2023, 22:46:02
     Author     : zerlu
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="es">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <title>Iniciar Sesión - Dunder Miflin</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     </head>
-    <body>
-        <section id="contact" class="contact">
+    <body class="bg-light">
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
-                <div class="section-title" data-aos="fade-down">
-                    <span>Contact Us</span>
-                    <h2>Contact Us</h2>
+                <a class="navbar-brand" href="#">Dunder Miflin</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="UsuarioController?action=add">Registrarse</a>
+                        </li>
+                    </ul>
                 </div>
-
-                <div class="row justify-content-center">
-                    <div
-                        class="col-lg-4 col-md-12"
-                        data-aos="fade-up"
-                        data-aos-delay="100"
-                        >
-                        <div class="info-box">
-                            <i class="bx bx-map"></i>
-                            <h3>Our Address</h3>
-                            <p>A108 Adam Street, New York, NY 535022</p>
-                        </div>
-                    </div>
-                    <div
-                        class="col-lg-4 col-md-6 mt-4 mt-lg-0"
-                        data-aos="fade-up"
-                        data-aos-delay="200"
-                        >
-                        <div class="info-box">
-                            <i class="bx bx-envelope"></i>
-                            <h3>Email Us</h3>
-                            <p>info@example.com<br />contact@example.com</p>
-                        </div>
-                    </div>
-                    <div
-                        class="col-lg-4 col-md-6 mt-4 mt-lg-0"
-                        data-aos="fade-up"
-                        data-aos-delay="300"
-                        >
-                        <div class="info-box">
-                            <i class="bx bx-phone-call"></i>
-                            <h3>Call Us</h3>
-                            <p>+1 5589 55488 55<br />+1 6678 254445 41</p>
-                        </div>
-                    </div>
-                </div>
-
-                <form
-                    action="forms/contact.php"
-                    method="post"
-                    role="form"
-                    class="php-email-form mt-4"
-                    data-aos="fade-up"
-                    data-aos-delay="400"
-                    >
-                    <div class="row">
-                        <div class="col-md-6 form-group">
-                            <input
-                                type="text"
-                                name="name"
-                                class="form-control"
-                                id="name"
-                                placeholder="Your Name"
-                                required
-                                />
-                        </div>
-                        <div class="col-md-6 form-group mt-3 mt-md-0">
-                            <input
-                                type="email"
-                                class="form-control"
-                                name="email"
-                                id="email"
-                                placeholder="Your Email"
-                                required
-                                />
-                        </div>
-                    </div>
-                    <div class="form-group mt-3">
-                        <input
-                            type="text"
-                            class="form-control"
-                            name="subject"
-                            id="subject"
-                            placeholder="Subject"
-                            required
-                            />
-                    </div>
-                    <div class="form-group mt-3">
-                        <textarea
-                            class="form-control"
-                            name="message"
-                            rows="5"
-                            placeholder="Message"
-                            required
-                            ></textarea>
-                    </div>
-                    <div class="my-3">
-                        <div class="loading">Loading</div>
-                        <div class="error-message"></div>
-                        <div class="sent-message">
-                            Your message has been sent. Thank you!
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <button type="submit">Send Message</button>
-                    </div>
-                </form>
             </div>
-        </section>
+        </nav>
+
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h2>Iniciar Sesión</h2>
+                        </div>
+                        <div class="card-body">
+                            <form action="LoginServlet" method="POST">
+                                <div class="mb-3">
+                                    <label for="correo" class="form-label">Correo Electrónico:</label>
+                                    <input type="email" class="form-control" id="correo" name="correo" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="contrasena" class="form-label">Contraseña:</label>
+                                    <input type="password" class="form-control" id="contrasena" name="contrasena" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

@@ -3,7 +3,6 @@ public class Me_Gusta {
     private int like_id;
     private Publicaciones post_id;
     private Usuario user_id;
-
     public int getLike_id() {
         return like_id;
     }
