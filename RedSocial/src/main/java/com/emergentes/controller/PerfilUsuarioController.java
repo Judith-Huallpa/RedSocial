@@ -5,17 +5,28 @@
  */
 package com.emergentes.controller;
 
+import com.emergentes.dao.PerfilUsuarioDAO;
+import com.emergentes.dao.PerfilUsuarioDAOimp;
 import com.emergentes.dao.UsuarioDAO;
 import com.emergentes.dao.UsuarioDAOimp;
+import com.emergentes.modelo.Perfil_Usuario;
 import com.emergentes.modelo.Usuario;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 /**
  *
@@ -28,32 +39,33 @@ public class PerfilUsuarioController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            UsuarioDAO dao = new UsuarioDAOimp();
+            PerfilUsuarioDAO dao = new PerfilUsuarioDAOimp();
             int id = 0;
-            Usuario usuario = new Usuario();
+            Perfil_Usuario perfilUsuario = new Perfil_Usuario();
             String action = (request.getParameter("action") != null) ? request.getParameter("action") : "view";
             switch (action) {
                 case "add":
-                    request.setAttribute("usuario", usuario);
-                    request.getRequestDispatcher("frmUsuarios.jsp").forward(request, response);
+                    request.setAttribute("perfilUsuario", perfilUsuario);
+                    request.getRequestDispatcher("ajustesPerfil.jsp").forward(request, response);
                     break;
                 case "edit":
                     id = Integer.parseInt(request.getParameter("id"));
-                    usuario = dao.getById(id);
-                    request.setAttribute("usuario", usuario);
-                    request.getRequestDispatcher("frmUsuarios.jsp").forward(request, response);
+                    perfilUsuario = dao.getById(id);
+                    request.setAttribute("perfilUsuario", perfilUsuario);
+                    request.getRequestDispatcher("ajustesPerfil.jsp").forward(request, response);
                     break;
                 case "delete":
                     id = Integer.parseInt(request.getParameter("id"));
                     dao.delete(id);
-                    response.sendRedirect(request.getContextPath() + "/UsuarioController");
+                    response.sendRedirect(request.getContextPath() + "/PerfilUsuarioController");
                     break;
                 case "view":
-                    List<Usuario> lista = dao.getAll();
-                    request.setAttribute("usuarios", lista);
-                    request.getRequestDispatcher("usuarios.jsp").forward(request, response);
+                    List<Perfil_Usuario> lista = dao.getAll();
+                    request.setAttribute("perfilesUsuarios", lista);
+                    request.getRequestDispatcher("perfileUsuario.jsp").forward(request, response);
                     break;
                 default:
+                    request.getRequestDispatcher("perfileUsuario.jsp").forward(request, response);
                     break;
             }
         } catch (Exception ex) {
@@ -64,47 +76,39 @@ public class PerfilUsuarioController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        String nombre = request.getParameter("nombre");
-        String correoElectronico = request.getParameter("correoElectronico");
-        String contrasena = request.getParameter("contrasena");
-        Usuario usuario = new Usuario();
 
-        // Setear el ID al objeto Usuario
-        usuario.setUser_id(id);
-        usuario.setNombre(nombre);
-        usuario.setCorreo_electronico(correoElectronico);
-        usuario.setContrasena(contrasena);
+        // Obtener parámetros del formulario
+        int id = Integer.parseInt(request.getParameter("id"));
+        int userId = Integer.parseInt(request.getParameter("userId"));
+        String descripcion = request.getParameter("descripcion");
+        
+        Perfil_Usuario perfilUsuario = new Perfil_Usuario();
+        // Crear un objeto Usuario y establecer el user_id
+        Usuario usuario = new Usuario();
+        usuario.setUser_id(userId);
+
+        perfilUsuario.setProfile_Id(id);
+        perfilUsuario.setUser_id(usuario);
+        perfilUsuario.setDescripcion(descripcion);
+
+        // Invocar el método insert o update del DAO según sea necesario
+        PerfilUsuarioDAO perfilUsuarioDAO = new PerfilUsuarioDAOimp();
 
         if (id == 0) {
-            // Nuevo
             try {
-                UsuarioDAO dao = new UsuarioDAOimp();
-                dao.insert(usuario);
-                response.sendRedirect(request.getContextPath() + "/UsuarioController");
+                // Nuevo
+                perfilUsuarioDAO.insert(perfilUsuario);
             } catch (Exception ex) {
-                System.out.println("Error: " + ex.getMessage());
+                Logger.getLogger(PerfilUsuarioController.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
-            // Edición
             try {
-                UsuarioDAO dao = new UsuarioDAOimp();
-                dao.update(usuario);
-                response.sendRedirect(request.getContextPath() + "/UsuarioController");
+                // Edición
+                perfilUsuarioDAO.update(perfilUsuario);
             } catch (Exception ex) {
-                System.out.println("Error: " + ex.getMessage());
+                Logger.getLogger(PerfilUsuarioController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

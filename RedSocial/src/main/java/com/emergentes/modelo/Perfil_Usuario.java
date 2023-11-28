@@ -1,9 +1,18 @@
 package com.emergentes.modelo;
+
 public class Perfil_Usuario {
+
     private int profile_Id;
     private Usuario user_id;
     private String foto_de_perfil;
     private String descripcion;
+
+    public Perfil_Usuario() {
+        this.profile_Id = 0;
+        this.user_id = null;
+        this.foto_de_perfil = "";
+        this.descripcion = "";
+    }
 
     public int getProfile_Id() {
         return profile_Id;
@@ -41,5 +50,5 @@ public class Perfil_Usuario {
     public String toString() {
         return "Perfil_Usuario{" + "profile_Id=" + profile_Id + ", user_id=" + user_id + ", foto_de_perfil=" + foto_de_perfil + ", descripcion=" + descripcion + '}';
     }
-       
+
 }

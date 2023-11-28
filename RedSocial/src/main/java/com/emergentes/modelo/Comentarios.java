@@ -8,6 +8,13 @@ public class Comentarios {
     private String contenido_del_comentario;
     private Date fecha_comentario;
 
+    public Comentarios() {
+        this.commentId = 0;
+        
+        this.contenido_del_comentario = "";
+        this.fecha_comentario = new Date();
+    }
+
     public int getCommentId() {
         return commentId;
     }

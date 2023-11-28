@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author zerlu
  */
-public class UsuarioDAOimp extends ConexionDB implements UsuarioDAO{
+public class UsuarioDAOimp extends ConexionDB implements UsuarioDAO {
 
     @Override
     public void insert(Usuario usuario) throws Exception {
@@ -84,7 +84,7 @@ public class UsuarioDAOimp extends ConexionDB implements UsuarioDAO{
                 usuario.setCorreo_electronico(rs.getString("correo_electronico"));
                 usuario.setContrasena(rs.getString("contrasena"));
                 usuario.setFecha_registro(rs.getDate("fecha_registro"));
-                
+
             }
         } catch (Exception e) {
             throw e;
@@ -103,14 +103,14 @@ public class UsuarioDAOimp extends ConexionDB implements UsuarioDAO{
             PreparedStatement ps = this.conn.prepareStatement("SELECT * FROM Usuarios;");
             ResultSet rs = ps.executeQuery();
 
-            usuarios=new ArrayList<Usuario>();
+            usuarios = new ArrayList<Usuario>();
             while (rs.next()) {
                 Usuario usuario = new Usuario();
                 usuario.setUser_id(rs.getInt("user_id"));
                 usuario.setNombre(rs.getString("nombre"));
                 usuario.setCorreo_electronico(rs.getString("correo_electronico"));
                 usuario.setContrasena(rs.getString("contrasena"));
-                usuario.setFecha_registro(rs.getDate("fecha_registro"));             
+                usuario.setFecha_registro(rs.getDate("fecha_registro"));
                 usuarios.add(usuario);
             }
         } catch (Exception e) {
@@ -120,5 +120,115 @@ public class UsuarioDAOimp extends ConexionDB implements UsuarioDAO{
         }
         return usuarios;
     }
-    
+
+    public boolean validarCredenciales(String correoElectronico, String contrasena) throws Exception {
+        try {
+            this.conectar();
+            PreparedStatement ps = this.conn.prepareStatement("SELECT * FROM Usuarios WHERE correo_electronico=? AND contrasena=?;");
+            ps.setString(1, correoElectronico);
+            ps.setString(2, contrasena);
+            ResultSet rs = ps.executeQuery();
+
+            // Devuelve true si hay al menos una fila (credenciales válidas), false si no hay filas
+            return rs.next();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.desconectar();
+        }
+    }
+
+    public Usuario getUsuarioByCorreoElectronico(String correoElectronico) {
+        Usuario usuario = null;
+        try {
+            this.conectar();
+            String sql = "SELECT * FROM Usuarios WHERE correo_electronico = ?";
+            try (PreparedStatement ps = this.conn.prepareStatement(sql)) {
+                ps.setString(1, correoElectronico);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        usuario = new Usuario();
+                        usuario.setUser_id(rs.getInt("user_id"));
+                        usuario.setNombre(rs.getString("nombre"));
+                        usuario.setCorreo_electronico(rs.getString("correo_electronico"));
+                        usuario.setContrasena(rs.getString("contrasena"));
+                        usuario.setFecha_registro(rs.getDate("fecha_registro"));
+                        // Agrega más asignaciones según las columnas de tu tabla
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.desconectar();
+        }
+        return usuario;
+    }
+
+    public Usuario getUsuarioConPerfilByCorreoElectronico(String correoElectronico) {
+        Usuario usuario = null;
+        try {
+            this.conectar();
+            String sql = "SELECT u.*, p.profile_id, p.foto_de_perfil, p.descripcion FROM Usuarios u LEFT JOIN Perfiles_Usuario p ON u.user_id = p.user_id WHERE u.correo_electronico = ?";
+            try (PreparedStatement ps = this.conn.prepareStatement(sql)) {
+                ps.setString(1, correoElectronico);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        usuario = new Usuario();
+                        usuario.setUser_id(rs.getInt("user_id"));
+                        usuario.setNombre(rs.getString("nombre"));
+                        usuario.setCorreo_electronico(rs.getString("correo_electronico"));
+                        usuario.setContrasena(rs.getString("contrasena"));
+                        usuario.setFecha_registro(rs.getDate("fecha_registro"));
+
+                        // Propiedades del perfil
+                        int profileId = rs.getInt("profile_id");
+                        String fotoPerfil = rs.getString("foto_de_perfil");
+                        String descripcionPerfil = rs.getString("descripcion");
+
+                        // Ahora puedes hacer lo que quieras con las propiedades del perfil
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.desconectar();
+        }
+        return usuario;
+    }
+
+    @Override
+    public List<Usuario> buscarUsuarios(String terminoBusqueda) throws Exception {
+        List<Usuario> usuariosEncontrados = new ArrayList<>();
+
+        try {
+            this.conectar();
+            String sql = "SELECT * FROM Usuarios WHERE nombre LIKE ? OR correo_electronico LIKE ?";
+            try (PreparedStatement ps = this.conn.prepareStatement(sql)) {
+                // Agregar los comodines % al término de búsqueda para buscar coincidencias parciales
+                ps.setString(1, "%" + terminoBusqueda + "%");
+                ps.setString(2, "%" + terminoBusqueda + "%");
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        Usuario usuario = new Usuario();
+                        usuario.setUser_id(rs.getInt("user_id"));
+                        usuario.setNombre(rs.getString("nombre"));
+                        usuario.setCorreo_electronico(rs.getString("correo_electronico"));
+                        usuario.setContrasena(rs.getString("contrasena"));
+                        usuario.setFecha_registro(rs.getDate("fecha_registro"));
+                        usuariosEncontrados.add(usuario);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.desconectar();
+        }
+
+        return usuariosEncontrados;
+    }
+
 }

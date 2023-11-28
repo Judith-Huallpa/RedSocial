@@ -5,6 +5,15 @@ public class Grupos {
     private String descripcion;
     private Usuario user_id;
 
+    public Grupos() {
+        this.group_id = 0;
+        this.nombreDelGrupo = "";
+        this.descripcion = "";
+        this.user_id = null;
+    }
+
+    
+    
     public int getGroup_id() {
         return group_id;
     }

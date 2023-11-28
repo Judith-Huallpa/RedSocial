@@ -18,4 +18,6 @@ public interface ComentarioDAO {
     public  void delete(int id) throws Exception;
     public Comentarios getById(int id )throws Exception;
     public List<Comentarios>getAll() throws Exception;
+    public List<Comentarios> getByPostId(int postId) throws Exception;
+
 }
