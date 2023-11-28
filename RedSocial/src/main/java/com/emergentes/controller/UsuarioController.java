@@ -80,7 +80,8 @@ public class UsuarioController extends HttpServlet {
             try {
                 UsuarioDAO dao = new UsuarioDAOimp();
                 dao.insert(usuario);
-               
+
+                response.sendRedirect(request.getContextPath() + "/PerfilUsuarioController");
             } catch (Exception ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
@@ -89,12 +90,11 @@ public class UsuarioController extends HttpServlet {
             try {
                 UsuarioDAO dao = new UsuarioDAOimp();
                 dao.update(usuario);
-                
+
             } catch (Exception ex) {
                 System.out.println("Error: " + ex.getMessage());
             }
         }
-        System.out.println("despues de insertar");
-        response.sendRedirect("perfileUsuario.jsp");
+
     }
 }

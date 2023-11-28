@@ -198,4 +198,37 @@ public class UsuarioDAOimp extends ConexionDB implements UsuarioDAO {
         return usuario;
     }
 
+    @Override
+    public List<Usuario> buscarUsuarios(String terminoBusqueda) throws Exception {
+        List<Usuario> usuariosEncontrados = new ArrayList<>();
+
+        try {
+            this.conectar();
+            String sql = "SELECT * FROM Usuarios WHERE nombre LIKE ? OR correo_electronico LIKE ?";
+            try (PreparedStatement ps = this.conn.prepareStatement(sql)) {
+                // Agregar los comodines % al término de búsqueda para buscar coincidencias parciales
+                ps.setString(1, "%" + terminoBusqueda + "%");
+                ps.setString(2, "%" + terminoBusqueda + "%");
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        Usuario usuario = new Usuario();
+                        usuario.setUser_id(rs.getInt("user_id"));
+                        usuario.setNombre(rs.getString("nombre"));
+                        usuario.setCorreo_electronico(rs.getString("correo_electronico"));
+                        usuario.setContrasena(rs.getString("contrasena"));
+                        usuario.setFecha_registro(rs.getDate("fecha_registro"));
+                        usuariosEncontrados.add(usuario);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.desconectar();
+        }
+
+        return usuariosEncontrados;
+    }
+
 }

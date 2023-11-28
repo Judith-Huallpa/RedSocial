@@ -5,6 +5,12 @@ public class Amigos {
     private Usuario user_id2;
     private String estado_amistad;
 
+    public Amigos() {
+        this.friendship_id = 0;
+        this.user_id1 = null;
+        this.user_id2 = null;
+        this.estado_amistad = "";
+    }
     public int getFriendship_id() {
         return friendship_id;
     }

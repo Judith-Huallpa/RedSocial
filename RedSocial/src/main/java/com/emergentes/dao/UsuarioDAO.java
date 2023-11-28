@@ -18,4 +18,5 @@ public interface UsuarioDAO {
     public  void delete(int id) throws Exception;
     public Usuario getById(int id )throws Exception;
     public List<Usuario>getAll() throws Exception;
+    List<Usuario> buscarUsuarios(String terminoBusqueda) throws Exception;
 }
